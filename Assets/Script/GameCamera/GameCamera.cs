@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+
+[ExecuteAlways]
 public class GameCamera : MonoBehaviour
 {
     private Camera _myCamera;
     private float CameraHeight = 1280.0f;
     private void _UpdateProperties()
     {
+        if (!_myCamera)
+        {
+            _myCamera = GetComponent<Camera>();
+        }
         float width = Screen.width;
         if (width < 576)
         {
@@ -25,8 +31,6 @@ public class GameCamera : MonoBehaviour
         float TargetHeightRatio = (float)20 / 9;
         float CurrentHeightRatio = (float)Screen.height / Screen.width;
         Debug.Log($"Target = {TargetHeightRatio} | Current = {CurrentHeightRatio}");
-
-
 
     } 
     // Start is called before the first frame update
