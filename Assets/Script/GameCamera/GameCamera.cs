@@ -8,30 +8,20 @@ using UnityEngine;
 public class GameCamera : MonoBehaviour
 {
     private Camera _myCamera;
+    public Vector2 TargetSize = new Vector2(9, 20);
     private float CameraHeight = 1280.0f;
     private void _UpdateProperties()
     {
-        if (!_myCamera)
-        {
-            _myCamera = GetComponent<Camera>();
-        }
-        float width = Screen.width;
-        if (width < 576)
-        {
-            width = 576;
-        }
+        float TargetRatio = TargetSize.x / TargetSize.y;
+        float ActualRatio = Screen.width / Screen.height;
+        float AspectRatioWidth = Screen.height * (TargetSize.x / TargetSize.y);
         _myCamera.projectionMatrix = Matrix4x4.Ortho(
-            (float)-width / 2.0f,
-            (float)width / 2.0f,
-            -CameraHeight / 2,
-            CameraHeight / 2,
+            -TargetSize.x / 2.0f,
+            TargetSize.x / 2.0f,
+            -TargetSize.y / 2,
+            TargetSize.y / 2,
             0.3f,1000
             );
-
-        float TargetHeightRatio = (float)20 / 9;
-        float CurrentHeightRatio = (float)Screen.height / Screen.width;
-        Debug.Log($"Target = {TargetHeightRatio} | Current = {CurrentHeightRatio}");
-
     } 
     // Start is called before the first frame update
     void Start()
@@ -49,5 +39,6 @@ public class GameCamera : MonoBehaviour
     void Update()
     {
         _UpdateProperties();
+        Debug.Log("Hello Update Call");
     }
 }
