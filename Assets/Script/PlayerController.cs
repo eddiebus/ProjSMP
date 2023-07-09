@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using UnityEngine.InputSystem.HID;
+using UnityEngine.InputSystem.LowLevel;
 
 
 public enum ControlMode
@@ -46,8 +48,47 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         _HandleKeyboardInput();
+        _HandleGamepadInput();
     }
 
+    void _HandleGamepadInput()
+    {
+        if (_currentMode != ControlMode.Gamepad) return;
+        Gamepad gamepadDevice = Gamepad.current;
+
+        _moveVector = new Vector2(0, 0);
+
+        Vector2 leftStick = gamepadDevice.leftStick.ReadValue();
+        _moveVector.x = leftStick.x;
+        _moveVector.y = leftStick.y;
+
+        if (gamepadDevice.dpad.up.isPressed)
+        {
+            _moveVector.y = 1;
+        }
+        else if (gamepadDevice.dpad.down.isPressed)
+        {
+            _moveVector.y = -1;
+        }
+
+        if (gamepadDevice.dpad.left.isPressed)
+        {
+            _moveVector.x = -1;
+        }
+        else if (gamepadDevice.dpad.right.isPressed)
+        {
+            _moveVector.x = 1;
+        }
+
+        if (gamepadDevice.leftTrigger.ReadValue() > 0.1f)
+        {
+            gamepadDevice.SetMotorSpeeds(gamepadDevice.leftTrigger.ReadValue() * 0.5f,0.0f);
+        }
+        else
+        {
+            gamepadDevice.SetMotorSpeeds(0,0);
+        }
+    }
     void _HandleKeyboardInput()
     {
         if (_currentMode != ControlMode.KeyboardMouse) return;
