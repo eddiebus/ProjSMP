@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.HID;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.UI;
 
 
 public enum ControlMode
@@ -12,6 +14,20 @@ public enum ControlMode
     KeyboardMouse,
     Gamepad,
     Touch
+}
+
+public class ActionButton
+{
+    public ActionButton()
+    {
+        PressedThisFrame = new UnityEvent();
+        ReleasedThisFrame = new UnityEvent();
+        Value = 0.0f;
+    }
+    
+    public float Value;
+    public UnityEvent PressedThisFrame;
+    public UnityEvent ReleasedThisFrame;
 }
 
 public class PlayerController : MonoBehaviour
@@ -23,15 +39,11 @@ public class PlayerController : MonoBehaviour
     private ControlMode _currentMode = ControlMode.KeyboardMouse;
     public ControlMode currentMode => _currentMode;
 
-    // Action Events
-    public UnityEvent OnFireStart;
-    public UnityEvent OnFireEnd;
-
     private Vector2 _moveVector;
-    private bool _fire;
+    private ActionButton _fire;
     
     public Vector2 moveVector => _moveVector;
-    public bool fire => _fire;
+    public ActionButton fire => _fire;
 
     // Start is called before the first frame update
     void Start()
@@ -41,19 +53,18 @@ public class PlayerController : MonoBehaviour
         {
             _HandleRawInputSystemEvent(eventPtr, device);
         };
-
+        _fire = new ActionButton();
     }
 
     // Update is called once per frame
     void Update()
     {
         _HandleKeyboardInput();
-        _HandleGamepadInput();
+        //_HandleGamepadInput();
     }
 
     void _HandleGamepadInput()
     {
-        if (_currentMode != ControlMode.Gamepad) return;
         Gamepad gamepadDevice = Gamepad.current;
 
         _moveVector = new Vector2(0, 0);
@@ -80,18 +91,9 @@ public class PlayerController : MonoBehaviour
             _moveVector.x = 1;
         }
 
-        if (gamepadDevice.leftTrigger.ReadValue() > 0.1f)
-        {
-            gamepadDevice.SetMotorSpeeds(gamepadDevice.leftTrigger.ReadValue() * 0.5f,0.0f);
-        }
-        else
-        {
-            gamepadDevice.SetMotorSpeeds(0,0);
-        }
     }
     void _HandleKeyboardInput()
     {
-        if (_currentMode != ControlMode.KeyboardMouse) return;
         Keyboard keyboardDevice = Keyboard.current;
         var wKey = keyboardDevice.wKey;
         var aKey = keyboardDevice.aKey;
@@ -118,6 +120,26 @@ public class PlayerController : MonoBehaviour
             _moveVector.x = 1;
         }
 
+        _fire.Value = 0.0f;
+        
+        
+        ButtonControl[] FireKeys = { keyboardDevice.jKey,keyboardDevice.spaceKey };
+
+        foreach (var button in FireKeys)
+        {
+            if (button.wasPressedThisFrame)
+            {
+                _fire.ReleasedThisFrame.Invoke();
+            }
+            else if (button.wasPressedThisFrame)
+            {
+                _fire.PressedThisFrame.Invoke();
+            }
+            else if (button.isPressed)
+            {
+                _fire.Value = 1.0f;
+            }
+        }
     }
 
     void _HandleRawInputSystemEvent(
@@ -125,43 +147,6 @@ public class PlayerController : MonoBehaviour
         InputDevice eventDevice
         )
     {
-        Keyboard KeyboardDevice = eventDevice as Keyboard;
-        Mouse MouseDevice = eventDevice as Mouse;
-        Gamepad GamepadDevice = eventDevice as Gamepad;
-        Touchscreen TouchScreenDevice = eventDevice as Touchscreen;
 
-        // Get Mode to change to
-        ControlMode NewControlMode = 0;
-
-        if (GamepadDevice != null)
-        {
-            NewControlMode = ControlMode.Gamepad;
-        }
-        else if (TouchScreenDevice != null)
-        {
-            NewControlMode = ControlMode.Touch;
-        }
-        // Default to Keyboard if no other support device is triggered
-        else
-        {
-            NewControlMode = ControlMode.KeyboardMouse;
-
-            if (KeyboardDevice != null)
-            {
-                if (KeyboardDevice.jKey.wasPressedThisFrame)
-                {
-
-                }
-            }
-        }
-
-        // Actual mode change. Set and call event
-        if (NewControlMode != _currentMode)
-        {
-            _currentMode = NewControlMode;
-            OnModeChange.Invoke();
-        }
-
-        Debug.Log($"Got Input Event| Current Control Mode = {System.Enum.GetName(typeof(ControlMode),_currentMode)}");
     }
 }

@@ -4,22 +4,32 @@ using UnityEngine;
 
 public class PlayerShip : Character
 {
-    private PlayerController myController;
+    public PlayerWeapon[] Weapons;
+    private PlayerController _myController;
     public float moveSpeed;
     
     // Start is called before the first frame update
     void Start()
     {
-        myController = GetComponent<PlayerController>();
+        _myController = GetComponent<PlayerController>();
+        this.tag = "Player";
+        Weapons = GetComponentsInChildren<PlayerWeapon>();
+        
     }
 
+
+    void Fire()
+    {
+        if (Weapons.Length == 0) return;
+        Weapons[0].Fire();
+    }
     // Update is called once per frame
     void Update()
     {
-        if (!myController) return;
+        if (!_myController) return;
         Vector2 moveVector = new Vector2(
-            myController.moveVector.x * moveSpeed,
-            myController.moveVector.y * moveSpeed 
+            _myController.moveVector.x * moveSpeed,
+            _myController.moveVector.y * moveSpeed 
         );
 
         moveVector *= Time.deltaTime;
@@ -29,5 +39,10 @@ public class PlayerShip : Character
             moveVector.y,
             0
         );
+
+        if (_myController.fire.Value > 0.0f)
+        {
+            Fire();
+        }
     }
 }
