@@ -19,9 +19,13 @@ public class Character : MonoBehaviour
             canDie = true;
         }
         health -= Mathf.Abs(Ammount);
+        
         if (health <= 0.0f && canDie)
         {
             OnDeath.Invoke();
         }
+
     }
+
+    
 }

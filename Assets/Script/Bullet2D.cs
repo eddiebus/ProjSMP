@@ -40,7 +40,6 @@ public class Bullet2D : MonoBehaviour
         }
         
     }
-
     
 
     // Update is called once per frame
@@ -52,21 +51,20 @@ public class Bullet2D : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log("asdasd");
         GameObject otherObj = col.gameObject;
         foreach (var tag in FriendTags)
         {
             if (tag == otherObj.tag)
             {
-                return;
+                return; // Other Gameobject is friendly. Do not damage.
             }
         }
         Character otherCharacter = otherObj.GetComponent<Character>();
         if (otherCharacter)
         {
             otherCharacter.Damage(damageValue);
+            Debug.Log($"{this.name} Did {damageValue} damage to object {otherObj.name}");
         }
-        
         
     }
 }
