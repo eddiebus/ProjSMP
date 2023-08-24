@@ -8,15 +8,25 @@ public class PlayerShip : Character
     private PlayerController _myController;
     public float moveSpeed;
     
+    
     // Start is called before the first frame update
     void Start()
     {
+        InitCharacter();
         _myController = GetComponent<PlayerController>();
         this.tag = "Player";
         Weapons = GetComponentsInChildren<PlayerWeapon>();
-        
     }
 
+    private void StayInBounds()
+    {
+        if (!_rigidbody2D)
+        {
+            return;
+        }
+        
+        Debug.Log(GetRigidBodyBounds());
+    }
 
     void Fire()
     {
@@ -39,6 +49,8 @@ public class PlayerShip : Character
             moveVector.y,
             0
         );
+        
+        StayInBounds();
 
         if (_myController.fire.Value > 0.0f)
         {

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6729357064018847430}
   - component: {fileID: 9159278580925469938}
   - component: {fileID: 6004989271405982443}
+  - component: {fileID: 2626422695481181636}
   - component: {fileID: 3345461467963834950}
   - component: {fileID: 8486453234825881620}
   - component: {fileID: 8187564036411944409}
@@ -94,9 +95,37 @@ MonoBehaviour:
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+  Tag: 
   health: 1
   Weapons: []
   moveSpeed: 4
+--- !u!50 &2626422695481181636
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3300349435971608200}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!114 &3345461467963834950
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,9 +9,10 @@ public class Bullet2D : MonoBehaviour
 {
     public float speed;
     public float damageValue = 0.1f;
+    public bool pierce = false;
     public GameObject TargetObject;
     public Vector2 AimVector = Vector2.up;
-    public float LifeTime = 100; //How Long until this object will destroy itself
+    public float LifeTime = 5; //How Long until this object will destroy itself
     public string[] FriendTags = { }; // Tags the bullet will not damage
     private Rigidbody2D _rigidbody2D;
     // Start is called before the first frame update
@@ -21,7 +22,15 @@ public class Bullet2D : MonoBehaviour
         if (!_rigidbody2D) _rigidbody2D = this.AddComponent<Rigidbody2D>();
         _rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
     }
-    
+
+    private void TickLife()
+    {
+        LifeTime -= Time.deltaTime;
+        if (LifeTime <= 0)
+        {
+            GameObject.Destroy(this.gameObject);
+        }
+    }
     
     private void Move()
     {
@@ -38,7 +47,6 @@ public class Bullet2D : MonoBehaviour
             Vector2 moveVector = AimVector.normalized * (speed * Time.deltaTime);
             _rigidbody2D.MovePosition(this.transform.position + (Vector3)moveVector);
         }
-        
     }
     
 
@@ -46,8 +54,8 @@ public class Bullet2D : MonoBehaviour
     void Update()
     {
         Move();
+        TickLife();
     }
-
 
     private void OnCollisionEnter2D(Collision2D col)
     {
@@ -64,6 +72,11 @@ public class Bullet2D : MonoBehaviour
         {
             otherCharacter.Damage(damageValue);
             Debug.Log($"{this.name} Did {damageValue} damage to object {otherObj.name}");
+        }
+
+        if (!pierce)
+        {
+            GameObject.Destroy(this.gameObject);
         }
         
     }

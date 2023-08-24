@@ -164,6 +164,6 @@ MonoBehaviour:
   damageValue: 0.1
   TargetObject: {fileID: 0}
   AimVector: {x: 0, y: 1}
-  LifeTime: 100
+  LifeTime: 5
   FriendTags:
   - Player
